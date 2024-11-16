@@ -1,4 +1,4 @@
-# Web Content Extractor and Word Counter
+# Web Page Content Analyser
 
 This project is a web-based application built using the MERN (MongoDB, Express, React, Node.js) stack. It allows users to input multiple URLs to extract and count the readable text content, focusing on the main article or body text of the web page. The application then provides results that include the total readable text, main content text, and non-content elements like navigation bars, headers, and footers.
 

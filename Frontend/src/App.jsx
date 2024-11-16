@@ -50,8 +50,13 @@ const App = () => {
       });
 
       setResults(response.data.results);
-      console.log(response);
-      toast.error(response.data.results[0].error);
+      
+      // Check each result for an error and show a toast if it exists
+      response.data.results.forEach((result) => {
+        if (result.error) {
+          toast.error(result.error);
+        }
+      });
     } catch (err) {
       console.error('Error fetching data:', err);
       toast.error('Failed to fetch data. Please try again later.');
