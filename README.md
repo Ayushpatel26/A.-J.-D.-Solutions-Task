@@ -14,6 +14,8 @@ The project is designed to accurately extract the main content from any given UR
 - **Puppeteer**: A headless browser library used to scrape web pages and extract content. It loads web pages in a headless Chrome instance to ensure the content is accurately retrieved.
 - **Logic Decisions**:
   - Fallback mechanisms for finding the main article content (using common HTML tags like `<article>`, `<div class="content">`, etc.).
+  - I have computed the non relevant content like navbars, sidebars, headers, ads, etc.
+  - Then I have computed the article/blog length by subtracting it from the whole content.
   - Uses error handling to manage cases where URLs are invalid or web pages are blocked.
   - A focus on avoiding over-extraction by separating main content text from headers, footers, and sidebars.
   - Implements bulk URL processing for efficient handling of multiple URLs at once.
