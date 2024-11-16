@@ -52,13 +52,14 @@ cd A.-J.-D.-Solutions-Task
    - Make sure the frontend (`client`) is pointing to the correct backend API URL. In the frontend code, ensure the base URL for Axios requests is set to `http://localhost:5000` (or your preferred port if you change the backend port).
 
 2. **Environment Setup for Backend**:
-   - Create a `.env` file in the `server` folder if it doesn't already exist, and set the required variables like `PORT`.
+   - Create a `.env` file in the `Backend` folder if it doesn't already exist, and set the required variables like `PORT`.
    - Start the backend server first to ensure it's ready to handle incoming requests.
 
 3. **Running Backend in Development Mode**:
    - Start the backend using:
      ```bash
      cd Backend
+     npm i
      npm run dev
      ```
    - This will run the server using `nodemon` if it's set up in the `package.json`, allowing for automatic restarts on code changes.
@@ -67,11 +68,12 @@ cd A.-J.-D.-Solutions-Task
    - Start the frontend with:
      ```bash
      cd Frontend
+     npm i
      npm run dev
      ```
    - This will start a development server, and changes to the React code will automatically reload the page in your browser.
 
-5. **Testing the Application**:
+5. **Running the Application**:
    - Open the frontend in your browser (`http://localhost:5173` if running locally).
    - Enter URLs separated by spaces in the input field.
    - Check that results are displayed correctly, and validate that no errors are appearing in the console or server logs.
