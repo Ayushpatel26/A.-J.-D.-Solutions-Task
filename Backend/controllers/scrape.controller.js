@@ -1,4 +1,7 @@
 const puppeteer = require('puppeteer');
+const {JSDOM} = require('jsdom');
+const {Readability} = require('@mozilla/readability');
+
 const { countWords } = require('../utils/wordCounter');
 
 async function scrapeSingleUrl(url) {
@@ -41,30 +44,29 @@ async function scrapeSingleUrl(url) {
             // Extract Total Readable Text from the entire body
             const totalText = getVisibleText(document.body);
 
-            // Calculate non-content text
-            let nonContentText = '';
-
-            // Target specific sections for non-content
-            const nonContentSelectors = ['header', 'footer', 'nav', '[class*="sidebar"]', '[id*="sidebar"]', '[class*="footer"]', '[id*="footer"]', '[class*="navbar"]', '[id*="navbar"]'];
-            nonContentSelectors.forEach(selector => {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(element => {
-                    nonContentText += ' ' + getVisibleText(element);
-                });
-            });
-
-            return { totalText, nonContentText };
+            return { totalText };
         });
+
+        const pageContent = await page.content();
+
+        // Create a JSDOM instance with the HTML content
+        const dom = new JSDOM(pageContent, { url });
+        const document = dom.window.document;
+
+        // Use Readability to parse the document
+        const reader = new Readability(document);
+        const article = reader.parse();
+
         await browser.close();
 
         // Count words using the utility function
         const totalWordCount = countWords(extractedContent.totalText);
-        const nonContentWordCount = countWords(extractedContent.nonContentText);
+        article ? contentWordCount = countWords(article.textContent) + countWords(article.title) : contentWordCount = 0;
 
         return {
             url,
             totalReadableText: totalWordCount,
-            blogContentText: totalWordCount - nonContentWordCount,
+            blogContentText: contentWordCount,
         };
     } catch (error) {
         console.error(`Error scraping the URL ${url} with Puppeteer:`, error.message);
@@ -76,13 +78,11 @@ async function scrapeSingleUrl(url) {
 }
 
 async function scrapeUrls(req, res) {
-    const { urls } = req.body;
+    const { urlList } = req.body;
 
-    if (!urls) {
+    if (!urlList) {
         return res.status(400).json({ error: 'URLs are required' });
     }
-
-    const urlList = typeof urls === 'string' ? urls.split(' ').map(url => url.trim()) : urls;
 
     if (!Array.isArray(urlList) || urlList.length === 0) {
         return res.status(400).json({ error: 'Invalid URL format. Provide space-separated URLs or an array of URLs.' });
@@ -92,13 +92,13 @@ async function scrapeUrls(req, res) {
         // Process all URLs concurrently
         const results = await Promise.all(
             urlList.map(async (url) => {
-              try {
-                return await scrapeSingleUrl(url);
-              } catch (error) {
-                return { url, error: error.message };
-              }
+                try {
+                    return await scrapeSingleUrl(url);
+                } catch (error) {
+                    return { url, error: error.message };
+                }
             })
-        ); 
+        );
         res.json({ results });
     } catch (error) {
         if (browser) await browser.close();

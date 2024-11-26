@@ -34,6 +34,11 @@ const App = () => {
 
     const urlList = urls.trim().split(/\s+/);
 
+    if (urlList.length > 5) {
+      toast.error('More than 5 URLs. Provide 5 or less URLs.');
+      return;
+    }
+
     const allUrlValid = urlList.every(isValidURL);
 
     if (!allUrlValid) {
@@ -46,7 +51,7 @@ const App = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/scrape', {
-        urls,
+        urlList,
       });
 
       setResults(response.data.results);
