@@ -33,6 +33,23 @@ The project is designed to accurately extract the main content from any given UR
 - **Headless Browsing**: Puppeteer is used to accurately capture dynamic content from web pages, making sure that the text retrieved is the same as what a real user would see.
 - **Content Separation**: Focus on distinguishing between main content and other page elements, allowing for accurate content analysis.
 
+### Change of Logic
+
+The previous content extraction relied solely on manually traversing the DOM to gather visible text content. While effective, this approach required a complex set of rules to handle dynamic web content, advertisements, navigation menus, and other non-essential elements. The new logic improves the accuracy of content extraction by leveraging Mozilla’s `Readability` library, which specializes in isolating the main article or relevant content from a webpage.
+
+1. **Use of `Puppeteer` for Page Rendering**:
+   - `Puppeteer` is utilized to open web pages and handle JavaScript-heavy websites that rely on client-side rendering. This ensures that all content, including dynamically loaded elements, is available for parsing.
+   - After loading the page with `Puppeteer`, the full HTML content is retrieved using `page.content()`.
+
+2. **Introduction of `JSDOM`**:
+   - The extracted HTML content is fed into `JSDOM`, creating an in-memory representation of the DOM, similar to how a browser renders a page.
+   - `JSDOM` allows `Readability` to parse the HTML structure as if it were a live browser instance.
+
+3. **Integration of Mozilla’s `Readability` Library**:
+   - `Readability` is used to analyze the document structure provided by `JSDOM` and extract the main content body.
+   - It removes irrelevant elements like ads, navigation links, footers, and sidebars, leaving only the core readable content.
+   - The `parse` method returns an `article` object containing structured information, including the main content text, title, and other metadata.
+
 ## 🛠️ Setup Instructions
 
 ### Prerequisites
